@@ -8,8 +8,7 @@ from appconf import AppConf
 
 class MaintenanceSettings(AppConf):
     IGNORE_URLS = ()
-    LOCKFILE_PATH = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), 'maintenance.lock')
+    LOCK_KEY = 'maintenance.lock'
     MODE = False
 
     class Meta:

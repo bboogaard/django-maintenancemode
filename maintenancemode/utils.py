@@ -2,6 +2,8 @@
 
 import os
 
+from django.core.cache import cache
+
 from .conf import settings
 
 
@@ -27,17 +29,12 @@ class IPList(list):
 
 
 def activate():
-    try:
-        open(settings.MAINTENANCE_LOCKFILE_PATH, 'ab', 0).close()
-    except OSError:
-        pass  # shit happens
+    cache.add(settings.MAINTENANCE_LOCK_KEY, '1', timeout=None)
 
 
 def deactivate():
-    if os.path.isfile(settings.MAINTENANCE_LOCKFILE_PATH):
-        os.remove(settings.MAINTENANCE_LOCKFILE_PATH)
+    cache.delete(settings.MAINTENANCE_LOCK_KEY)
 
 
 def status():
-    return settings.MAINTENANCE_MODE or os.path.isfile(
-        settings.MAINTENANCE_LOCKFILE_PATH)
+    return settings.MAINTENANCE_MODE or cache.get(settings.MAINTENANCE_LOCK_KEY)
